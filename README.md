@@ -1,6 +1,6 @@
 # Maldives Y-STR analysis workflow
 
-Version 1.1.0. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
+Version 1.1.1. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
 
 Only explicitly invented demonstration data are included. Private genetic profiles, participant identifiers, predictor records, manuscript results and private verification targets are excluded. Results are calculated from the user's input; demonstration output does not reproduce the private study.
 

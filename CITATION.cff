@@ -9,7 +9,7 @@ authors:
     given-names: Ihthisham
   - family-names: Patel
     given-names: Bhargav C.
-version: "1.1.0"
+version: "1.1.1"
 license: GPL-3.0-only
 date-released: "2026-11-07"
 abstract: "Reproducible Y-STR analysis code with synthetic examples, quality control, and a separate Arlequin GUI handoff."

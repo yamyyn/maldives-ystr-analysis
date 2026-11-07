@@ -1,3 +1,8 @@
+# Version 1.1.1 - 7 November 2026
+
+- Removed an inherited non-default renv profile selector that referred to an absent profile-specific lockfile. Dependency restoration now uses the supplied root renv.lock.
+- No analysis functions, scientific settings, example inputs or package versions changed.
+
 # Version 1.1.0 — 7 November 2026
 
 - Finalized public source archive and GPL-3.0-only licence; updated citation authors.

@@ -7,3 +7,6 @@ The checks include DYS385 single-state handling, original-call preservation, lin
 The public archive contains source code, templates, documentation and invented input only. Cached results, local libraries, external result files, private records and private verification targets are excluded. Personal-path and credential-pattern scans found no matches. The source manifest and archive SHA-256 provide integrity checks, not proof of scientific equivalence to private data.
 
 A clean network dependency restore, another operating system, GitHub-hosted CI, a private Arlequin GUI run and numerical/visual equality to every manuscript output were not verified. The primary AMOVA remains a separate Arlequin GUI step. This repository is a workflow source package, not an installable R library package. GPL-3.0-only was selected by the study author.
+
+## GitHub environment patch
+The initial hosted run installed R successfully but stopped during renv setup because an inherited profile selector pointed away from the supplied lockfile. Version 1.1.1 removes that selector. Analysis code and dependencies remain identical to the locally tested version; the hosted rerun is assessed separately.
