@@ -1,0 +1,10 @@
+key,expected,tolerance,critical
+full.n,,,TRUE
+complete.n,,,TRUE
+full.distinct_haplotypes,,,TRUE
+full.singleton_haplotypes,,,TRUE
+full.HMP,,1e-10,TRUE
+full.HD,,1e-10,TRUE
+full.DC,,1e-10,TRUE
+locus.system_count,,,TRUE
+nj.negative_raw_edges,,,TRUE

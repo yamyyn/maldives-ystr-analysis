@@ -1,0 +1,5 @@
+source("R/runtime.R");require_packages()
+dir.create("outputs/environment",recursive=TRUE,showWarnings=FALSE)
+writeLines(capture.output(sessionInfo()),"outputs/environment/session-info.txt")
+pkgs<-c("ggplot2","dplyr","tidyr","stringr","purrr","tibble","scales","patchwork","ggrepel","openxlsx","ape")
+write_csv(data.frame(package=pkgs,version=vapply(pkgs,function(p)as.character(packageVersion(p)),"")),"outputs/environment/package-versions.csv")

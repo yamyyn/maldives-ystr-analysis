@@ -1,0 +1,1 @@
+`example/synthetic_calls.csv` contains independently invented demonstration records. Names beginning SYN and Demo do not identify study participants or populations. DEL is an explicit demonstration state; it does not establish a biological deletion. The generator creates the complete prepared demonstration bundle. Private study inputs belong outside public version control.

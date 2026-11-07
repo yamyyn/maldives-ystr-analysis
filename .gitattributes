@@ -1,0 +1,2 @@
+# Preserve exact source bytes across checkouts: provenance hashes are byte-based.
+* -text

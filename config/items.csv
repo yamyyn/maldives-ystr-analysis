@@ -1,0 +1,29 @@
+id,designation,locked_label,revision_label,kind,family,builder,width_mm,height_mm,state
+sampling_map,MAIN,Figure 1,,figure,,,174,220,PENDING_IN_LOCKED_INVENTORY
+locus_diversity,MAIN,Figure 2,Figure 4,figure,locus,make_plot,130,155,PORTED_SOURCE
+pcoa,MAIN,Figure 3,Figure 6,figure,pcoa,build_plot,174,130,PORTED_SOURCE
+predicted_distribution,MAIN,Figure 4,Figure 5,figure,haplogroup,make_combined_grob,174,142,PORTED_REVISION
+accumulation,SUPPLEMENTARY,Figure S1,,figure,accumulation,build_plot,150,105,PORTED_SOURCE
+nj,SUPPLEMENTARY,Figure S2,,figure,nj,make_nj_plot,174,150,PORTED_SOURCE
+dapc_region,SUPPLEMENTARY,Figure S3,,figure,dapc_geography,build_region_plot,174,140,PORTED_SOURCE
+dapc_population,SUPPLEMENTARY,Figure S4,,figure,dapc_geography,build_admin_plot,174,140,PORTED_SOURCE
+dapc_predicted,SUPPLEMENTARY,Figure S5,,figure,dapc_haplogroup,build_hg_plot,174,140,PORTED_REVISION
+rarefaction,SUPPLEMENTARY,Figure S6,,figure,rarefaction,make_combined_grob,174,210,PORTED_SOURCE
+sharing,SUPPLEMENTARY,Figure S7,,figure,sharing,make_combined_grob,174,215,PORTED_SOURCE
+spatial,SUPPLEMENTARY,Figure S8,,figure,spatial,make_combined_grob,174,225,PORTED_SOURCE
+no_call,SUPPLEMENTARY,Figure S9,,figure,nocall,make_combined,304.8,223.52,PORTED_REVISION
+pairwise,SUPPLEMENTARY,Figure S10,,figure,pairwise,combined,174,225,PORTED_SOURCE
+panel_performance,SUPPLEMENTARY,Figure S11,,figure,panels,build_figure,174,158,PORTED_SOURCE
+population_forensic,SUPPLEMENTARY,Figure S12,,figure,admin,build_combined,174,145,PORTED_SOURCE
+table_sampling,MAIN,Table 1,,table,table_sampling,write_table_workbook,,,PORTED_SOURCE_WRITER
+table_forensic,MAIN,Table 2,,table,table_forensic,write_table_workbook,,,PORTED_SOURCE_WRITER
+table_locus,MAIN,Table 3,,table,table_locus,write_workbook,,,PORTED_SOURCE_WRITER
+table_panels,MAIN,Table 4,,table,table_panels,write_table_workbook,,,PORTED_SOURCE_WRITER
+table_structure,MAIN,Table 5,Table 6,table,table_structure,write_table_workbook,,,PORTED_SOURCE_WRITER
+table_predicted,MAIN,Table 6,Table 5,table,table_haplogroup,write_workbook,,,PORTED_SOURCE_WRITER_REVISED_INPUT
+allele_workbook,SUPPLEMENTARY,Table S1,,table,table_alleles,write_population_sheet,,,PORTED_SOURCE_WRITER
+population_forensic_table,SUPPLEMENTARY,Table S2,,table,table_supp_admin,write_workbook,,,PORTED_SOURCE_WRITER
+sensitivity_table,SUPPLEMENTARY,Table S3,,table,table_sensitivity,write_workbook,,,PORTED_SOURCE_WRITER
+recoding_audit,SUPPLEMENTARY,Table S4,,table,table_recoding,write_workbook,,,PORTED_SOURCE_WRITER_REVISED_INPUT
+haplotype_catalogue,SUPPLEMENTARY,Table S5,,table,revised_catalogue,write_table,,,PORTED_REVISION_CSV
+pairwise_statistics,SUPPLEMENTARY,Table S6,,table,table_pairwise,write_workbook,,,PORTED_SOURCE_WRITER

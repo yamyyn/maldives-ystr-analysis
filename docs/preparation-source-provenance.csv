@@ -1,0 +1,5 @@
+"Source_script","Role","Source_MD5","Adaptation"
+"01_import_master_data.R","Character import and explicit column preparation","a4abcc0d87c9911219afba6e825d9364","Count-neutral configurable implementation; no original observations or expected values"
+"02_metadata_qc.R","Metadata and coordinate QC","2dab0284f10ea056b87570d07d7659b9","Count-neutral configurable implementation; no original observations or expected values"
+"03_ystr_qc.R","Genotype inventory and multicopy QC","fc7eb583cc278dcdbb369051c299d70f","Count-neutral configurable implementation; no original observations or expected values"
+"04_create_analysis_datasets.R","Cohort preparation, provenance and confirmed recoding","bd63bde4a6d4a596a6cedd1161e7eecc","Count-neutral configurable implementation; no original observations or expected values"

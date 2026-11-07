@@ -1,0 +1,45 @@
+mode: synthetic
+input: data/example_synthetic/initial_qc_synthetic.csv
+qc_config: config/initial_qc.R
+run_id: synthetic_release_v1_1_0
+results_root: results
+clean_root: data/clean
+panel_file: config/marker_panels.csv
+seed_file: config/random_seeds.csv
+prediction_leaves: data/example_synthetic/prediction_leaves.csv
+parent_mapping: data/example_synthetic/parent_mapping.csv
+reported_parents: data/example_synthetic/reported_parents.csv
+arlequin_results: null
+private_targets: null
+original_targets: null
+original_observations: null
+sampling_map_approved: false
+sampling_map_directory: null
+license_approved: false
+captions_approved: false
+private_comparison_approved: false
+iterations:
+  sensitivity: 39
+  paired_bootstrap: 39
+  accumulation: 39
+  structure: 39
+  mantel: 39
+  rarefaction: 39
+  bootstrap: 39
+dapc:
+  training: 0.90
+  repetitions: 3
+  pc_grid: [1, 2, 3]
+haplogroup:
+  pc_grid: [2, 3]
+  probability_threshold: 95
+  fitness_threshold: 40
+  rounding_tolerance: 0.21
+  cv_minimum: 2
+  rare_group_minimum: 5
+  unaffected_loci: [dys389i, dys635, dys389iiadj, dys460, dys19, ygatah4, dys448, dys391, dys456, dys390, dys438, dys392, dys518, dys437, dys393, dys439, dys533]
+graphics:
+  font: Arial
+  dpi: 150
+  formats: [pdf, svg, png, tiff]
+  palettes: [color, grayscale]

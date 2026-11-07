@@ -1,0 +1,6 @@
+source("R/runtime.R")
+require_packages()
+dir.create("results/environment",recursive=TRUE,showWarnings=FALSE)
+writeLines(capture.output(sessionInfo()),"results/environment/sessionInfo.txt")
+if(!requireNamespace("renv",quietly=TRUE))stop("Install renv before updating the snapshot")
+renv::snapshot(prompt=FALSE)

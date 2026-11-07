@@ -1,0 +1,50 @@
+# Copy to config/private/settings.yml and configure independent evidence.
+# Never use the synthetic mapping/confirmation/predictor files for real data.
+mode: private
+input: data/private/master.csv
+qc_config: config/private/initial_qc.R
+run_id: private_run_01
+results_root: results
+clean_root: data/clean
+panel_file: config/marker_panels.csv
+seed_file: config/random_seeds.csv
+prediction_leaves: data/private/prediction_leaves.csv
+parent_mapping: data/private/parent_mapping.csv
+reported_parents: data/private/reported_parents.csv
+arlequin_results:
+  amova: external/arlequin/private/hierarchical_result.xml
+  atoll: external/arlequin/private/population_pairwise.xml
+  region: external/arlequin/private/region_pairwise.xml
+private_targets: null
+original_targets: data/private/original_targets.csv
+original_observations: data/private/original_observations.csv
+sampling_map_approved: false
+sampling_map_directory: null
+license_approved: false
+captions_approved: false
+private_comparison_approved: false
+iterations:
+  sensitivity: 100000
+  paired_bootstrap: 10000
+  accumulation: 500
+  structure: 10000
+  mantel: 9999
+  rarefaction: 10000
+  bootstrap: 10000
+dapc:
+  training: 0.90
+  repetitions: 100
+  pc_grid: [1, 2, 3, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140]
+haplogroup:
+  pc_grid: [17, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
+  probability_threshold: 95
+  fitness_threshold: 40
+  rounding_tolerance: 0.21
+  cv_minimum: 2
+  rare_group_minimum: 5
+  unaffected_loci: [dys389i, dys635, dys389iiadj, dys460, dys19, ygatah4, dys448, dys391, dys456, dys390, dys438, dys392, dys518, dys437, dys393, dys439, dys533]
+graphics:
+  font: Arial
+  dpi: 600
+  formats: [pdf, svg, png, tiff]
+  palettes: [color, grayscale]

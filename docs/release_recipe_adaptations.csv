@@ -1,0 +1,4 @@
+Family,Adaptation
+initial_qc_helpers,Delegates to shared observed-state normalizer
+table_alleles,DYS385 uses the same single-state collapse as import
+analysis_locus,DYS385 unordered-pattern helper delegates to shared normalizer
