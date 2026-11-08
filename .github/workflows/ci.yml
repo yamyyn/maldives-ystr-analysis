@@ -13,3 +13,7 @@ jobs:
         run: Rscript run_pipeline.R --config config/analysis_settings.yml
       - name: Check invariants and failure gates
         run: Rscript tests/run_tests.R
+      - name: Check panel-specific verification and GUI exports
+        run: |
+          Rscript verification/amova_leave_one_division_out.R
+          Rscript verification/export_filtered_sensitivity_projects.R

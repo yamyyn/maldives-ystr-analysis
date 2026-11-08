@@ -1,4 +1,4 @@
-# Release verification — version 1.1.0
+# Release verification â€” version 1.1.0
 
 Verified locally on Windows using R 4.6.1 and installed dependencies. All 21 synthetic workflow stages completed and 235 automated checks passed. All R source files parsed successfully. Stage logs contained no analysis warnings; host startup emitted locale-setting warnings.
 
@@ -10,3 +10,9 @@ A clean network dependency restore, another operating system, GitHub-hosted CI, 
 
 ## GitHub environment patch
 The initial hosted run installed R successfully but stopped during renv setup because an inherited profile selector pointed away from the supplied lockfile. Version 1.1.1 removes that selector. Analysis code and dependencies remain identical to the locally tested version; the hosted rerun is assessed separately.
+
+## Version 1.2.0 method update — 8 November 2026
+
+All 21 synthetic pipeline stages completed locally. The full regression suite passed 244 checks, including invented-data cases for panel-specific exclusion, categorical/allele-size row alignment, unchanged retained integers, invalid calls and partial-repeat cancellation before DYS389II adjustment. Separate LODO and sensitivity-export helpers were run on synthetic data, including configured alternative geographic labels.
+
+The tests assert data-derived invariants and invented fixture arithmetic; no private study genotypes or manuscript numerical targets are included. Synthetic R calculations remain labelled as verification, not external Arlequin results. Primary private AMOVA requires the documented GUI checkpoint.

@@ -1,3 +1,11 @@
+# Version 1.2.0 — 8 November 2026
+
+- Replaced allele-size microvariant truncation with profile exclusion at included loci, assessed before DYS389II adjustment.
+- Separated Arlequin-eligible metadata from the complete categorical DAPC cohort, preserving microvariant states in DAPC.
+- Added data-derived eligibility audits and explicit cohort counts; corrected panel-specific filtering in leave-one-division-out verification.
+- Added synthetic regression cases for alignment, omitted-marker eligibility, no-call handling and partial-repeat cancellation.
+- Updated methodology and external GUI-run instructions. No private genotypes, study-specific expected results or external executable were added.
+
 # Version 1.1.1 - 7 November 2026
 
 - Removed an inherited non-default renv profile selector that referred to an absent profile-specific lockfile. Dependency restoration now uses the supplied root renv.lock.

@@ -1,6 +1,6 @@
 # Maldives Y-STR analysis workflow
 
-Version 1.1.1. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
+Version 1.2.0. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
 
 Only explicitly invented demonstration data are included. Private genetic profiles, participant identifiers, predictor records, manuscript results and private verification targets are excluded. Results are calculated from the user's input; demonstration output does not reproduce the private study.
 
@@ -50,3 +50,7 @@ See [methods](docs/methods.md), [execution guide](docs/workflow.md), [release no
 Code is distributed under GPL-3.0-only, selected by the study author. See `LICENSE`, `NOTICE.md` and `CITATION.cff`. The source repository is [https://github.com/yamyyn/maldives-ystr-analysis](https://github.com/yamyyn/maldives-ystr-analysis). No software DOI has been assigned.
 
 Before making local source edits, verify the extracted release with Rscript tools/check_source_integrity.R. The manifest covers source integrity, not private-data equivalence. Test fixtures contain independent toy arithmetic expectations, never fixed manuscript results.
+
+## Allele-size versus categorical cohorts
+
+AMOVA/RST excludes profiles carrying microvariants at the included single-copy loci; no integer truncation is used. Categorical DAPC retains distinct microvariant states and its complete-profile cohort. Cohort sizes and exclusion reasons are derived from input data. Reduced marker panels must reassess eligibility separately. Primary AMOVA remains an external Arlequin GUI analysis. See [method details](docs/external_arlequin.md).

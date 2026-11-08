@@ -1,7 +1,7 @@
 mode: synthetic
 input: data/example_synthetic/initial_qc_synthetic.csv
 qc_config: config/initial_qc.R
-run_id: synthetic_release_v1_1_0
+run_id: synthetic_release_v1_2_0
 results_root: results
 clean_root: data/clean
 panel_file: config/marker_panels.csv

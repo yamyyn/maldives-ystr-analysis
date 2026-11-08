@@ -78,7 +78,7 @@ dispatch_stage <- function(id,s,cfg) {
         assert(!is.null(cfg$arlequin_results)&&all(file.exists(unlist(cfg$arlequin_results))),"AWAITING_EXTERNAL_ARLEQUIN: export is ready; provide the three configured result files and resume")
         result<-import_arlequin(cfg$arlequin_results,maps,ncol(st$integer),cfg$iterations$structure,nrow(st$integer))
       }else{
-        x<-as.matrix(st$integer);meta<-st$metadata
+        x<-as.matrix(st$integer);meta<-st$arlequin_metadata
         point<-amova_point(x,meta$atoll,meta$region)
         a<-data.frame(Source=c("Among regions","Among populations within regions","Within populations"),Variance_Component=point[c("Va","Vb","Vc")],Percentage_of_Variation=point[c("percent_region","percent_population","percent_within")],P_Raw=NA_real_)
         result<-list(amova=list(AMOVA=a),external=FALSE,software="Synthetic R method-of-moments verification; not Arlequin")

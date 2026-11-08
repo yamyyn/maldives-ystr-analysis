@@ -1,14 +1,36 @@
+# The categorical and allele-size branches have explicitly separate row sets.
+allele_size_eligibility <- function(data, single, no_call_tokens=c("", "DEL", "?", "NULL")) {
+  assert(length(single)>0L && !anyDuplicated(single) && all(single %in% names(data)), "Invalid included allele-size loci")
+  raw <- as.data.frame(lapply(data[single], as.character), stringsAsFactors=FALSE)
+  missing <- as.data.frame(lapply(raw,function(v)is.na(v) | v %in% no_call_tokens))
+  numeric <- as.data.frame(lapply(raw,function(v)suppressWarnings(as.numeric(v))))
+  invalid <- !as.matrix(missing) & (!is.finite(as.matrix(numeric)) | as.matrix(numeric)<=0)
+  assert(!any(invalid), "Invalid allele-size call: resolve QC rather than silently recoding it")
+  micro <- !as.matrix(missing) & is.finite(as.matrix(numeric)) &
+           abs(as.matrix(numeric)-round(as.matrix(numeric)))>1e-12
+  micro[is.na(micro)] <- FALSE
+  eligible <- rowSums(as.matrix(missing))==0L & rowSums(micro)==0L
+  list(eligible=eligible, numeric=numeric,
+       audit=data.frame(Row=seq_len(nrow(data)),sample_id=data$sample_id,Eligible=eligible,
+         Missing_loci=apply(as.matrix(missing),1,function(v)paste(single[v],collapse=";")),
+         Microvariant_loci=apply(micro,1,function(v)paste(single[v],collapse=";"))))
+}
 prepare_structure <- function(complete,single) {
-  x<-as.data.frame(lapply(complete[single],function(v)as.numeric(as.character(v))))
-  assert(all(is.finite(as.matrix(x))),"Structure source must contain complete numeric states")
+  eligibility <- allele_size_eligibility(complete,single)
+  x <- eligibility$numeric
+  assert(all(is.finite(as.matrix(x))),"Categorical structure source must contain complete numeric states")
   assert(all(c("dys389i","dys389ii") %in% names(x)),"Configure DYS389 adjustment explicitly for this assay")
+  # Eligibility is assessed on typed calls BEFORE subtraction, so partial repeats cannot cancel.
   x$dys389iiadj<-x$dys389ii-x$dys389i;x$dys389ii<-NULL
   assert(all(x$dys389iiadj>0),"DYS389II adjusted values must be positive")
-  # Preserve decimal states for DAPC; truncate only the separate Arlequin branch.
-  integer<-as.data.frame(lapply(x,trunc))
-  list(decimal=x,integer=integer,metadata=complete[c("sample_id","atoll","region")],
-    recoding=data.frame(Row=rep(seq_len(nrow(x)),ncol(x)),Locus=rep(names(x),each=nrow(x)),
-      Decimal=unlist(x,use.names=FALSE),Integer=unlist(integer,use.names=FALSE)))
+  integer <- x[eligibility$eligible,,drop=FALSE]
+  assert(nrow(integer)>0L && all(as.matrix(integer)==round(as.matrix(integer))),"No eligible integer allele-size cohort")
+  meta <- complete[c("sample_id","atoll","region")]
+  list(decimal=x,integer=integer,metadata=meta,
+    arlequin_metadata=meta[eligibility$eligible,,drop=FALSE],eligibility=eligibility$audit,
+    cohort_summary=data.frame(Categorical_N=nrow(x),Allele_size_N=nrow(integer),Excluded_N=sum(!eligibility$eligible)),
+    recoding=data.frame(Row=rep(which(eligibility$eligible),ncol(x)),Locus=rep(names(x),each=nrow(integer)),
+      Observed=unlist(integer,use.names=FALSE),Exported=unlist(integer,use.names=FALSE),Action="UNCHANGED_INTEGER_CALL"))
 }
 validate_pairwise <- function(x,labels=NULL,p_values=FALSE) {
   assert(is.matrix(x)&&nrow(x)==ncol(x)&&nrow(x)>=3L,"Pairwise matrix must be square with >=3 groups")
@@ -26,7 +48,7 @@ pairwise_long <- function(rst,p) {
 }
 export_arlequin <- function(structure,out) {
   dir.create(out,recursive=TRUE,showWarnings=FALSE)
-  meta<-structure$metadata;d<-cbind(meta,structure$integer)
+  meta<-structure$arlequin_metadata;d<-cbind(meta,structure$integer)
   loci<-names(structure$integer)
   e<-method_env("arlequin_method",list(STRUCTURE_LOCI=loci,STRUCTURE_LOCI_DISPLAY=setNames(toupper(loci),loci)))
   # Original text writer, with a count-neutral header replacing case labels.
@@ -49,7 +71,8 @@ export_arlequin <- function(structure,out) {
   }
   writeLines(c(lines,hier),file.path(out,"hierarchical_amova.arp"))
   e$validate_common_arp(file.path(out,"hierarchical_amova.arp"),nrow(maps$atoll),nrow(d))
-  saveRDS(maps,file.path(out,"label_maps.rds"));write_csv(structure$recoding,file.path(out,"integer_recoding_audit.csv"))
+  saveRDS(maps,file.path(out,"label_maps.rds"));write_csv(structure$recoding,file.path(out,"integer_call_audit.csv"))
+  write_csv(structure$eligibility,file.path(out,"allele_size_eligibility_audit.csv"))
   maps
 }
 import_arlequin <- function(files,maps,n_loci,permutations,n_profiles=NULL) {

@@ -69,9 +69,12 @@ make_analysis_bundle <- function(s,cfg) {
   contexts<-lapply(contexts,function(x)modifyList(common,x))
   sample<-s$`03_sampling_statistics`$population;meta<-s$`03_sampling_statistics`$metadata
   sample_table<-data.frame(`Administrative division code`=sample$Group,`Administrative division`=sample$Group,Region=map[sample$Group],
-    `N, full forensic dataset`=sample$Full_n,`N, complete structure dataset`=sample$Complete_n,`Excluded structural-anomaly profiles`=sample$Full_n-sample$Complete_n,
+    `N, full forensic dataset`=sample$Full_n,`N, complete-profile categorical dataset`=sample$Complete_n,`Excluded structural-anomaly profiles`=sample$Full_n-sample$Complete_n,
     `Weighted latitude`=as.numeric(meta$latitude_weighted[match(sample$Group,meta$atoll)]),`Weighted longitude`=as.numeric(meta$longitude_weighted[match(sample$Group,meta$atoll)]),check.names=FALSE)
   total<-sample_table[1,,drop=FALSE];total[1,1:3]<-c("Total","Total","All");total[1,4:6]<-c(n,nrow(d$complete),n-nrow(d$complete));total[1,7:8]<-NA;sample_table<-rbind(sample_table,total)
+  eligible_meta<-s$`09a_prepare_structure`$arlequin_metadata
+  sample_table$`N, allele-size-eligible dataset`<-as.integer(table(factor(eligible_meta$atoll,levels=sample_table[[1]])))
+  sample_table$`N, allele-size-eligible dataset`[sample_table[[1]]=="Total"]<-nrow(eligible_meta)
   table2<-data.frame(Population=study$population_label,N=overall$N,`Analytical systems`=length(markers),`Distinct haplotypes`=overall$Distinct_Haplotypes,`Singleton haplotypes`=overall$Unique_Haplotypes,HMP=overall$HMP,HD=overall$HD,DC=overall$DC,check.names=FALSE)
   mainhg<-data.frame(`Final Haplogroup category`=c(as.character(hg$frequency$Parent),"Total"),Count=c(hg$frequency$N,n),`Frequency (%)`=c(hg$frequency$Percent,100),check.names=FALSE)
   sensitivity<-s$`06_sensitivity_analysis`$stratified_summary;sensitivity<-sensitivity[sensitivity$Scope=="Overall",]

@@ -12,3 +12,5 @@ For the descriptive pooling sensitivity:
 This compares sample-weighted pooling, equal division weights, and exclusion of each division in turn.
 
 Run Rscript verification/local_profile_sensitivity.R after the full pipeline for full-versus-complete division rarefaction at a common feasible size and the excluded-profile haplotype counts. The pooling script also exports the self-pair floor decomposition; this is descriptive and is not an unbiased estimator.
+
+Version 1.2.0: allele-size cohorts exclude included-locus intermediate calls. LODO reassesses eligibility independently for its full and non-RM panels. `export_filtered_sensitivity_projects.R` prepares reduced-panel and configurable capital-placement GUI inputs; it never runs Arlequin.
