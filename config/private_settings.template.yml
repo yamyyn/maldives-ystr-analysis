@@ -1,4 +1,5 @@
-# Copy to config/private/settings.yml and configure independent evidence.
+# Study-method configuration: copy to config/private/settings.yml.
+# Supply authorized local input and independent evidence; results are data-derived.
 # Never use the synthetic mapping/confirmation/predictor files for real data.
 mode: private
 input: data/private/master.csv
@@ -28,10 +29,12 @@ iterations:
   paired_bootstrap: 10000
   accumulation: 500
   structure: 10000
-  mantel: 9999
+  mantel: 10000
+  correlogram: 10000
   rarefaction: 10000
   bootstrap: 10000
 dapc:
+  group_order: alphabetical
   training: 0.90
   repetitions: 100
   pc_grid: [1, 2, 3, 5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140]

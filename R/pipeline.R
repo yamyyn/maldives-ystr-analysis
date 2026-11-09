@@ -14,12 +14,13 @@ load_pipeline_config <- function(path) {
   if(cfg$mode=="private"){
     assert(!any(grepl("example|synthetic",unlist(cfg[c("input","prediction_leaves","parent_mapping","reported_parents")]),ignore.case=TRUE)),"Private mode cannot use demonstration files")
   }
+  if(is.null(cfg$iterations$correlogram))cfg$iterations$correlogram<-cfg$iterations$mantel
   cfg$out<-file.path("results",cfg$run_id);cfg$clean_out<-file.path("data/clean",cfg$run_id)
   cfg$seeds<-read.csv(cfg$seed_file);assert(!anyDuplicated(cfg$seeds$analysis),"Duplicate random seed key")
   assert(all(unlist(cfg$iterations)>=1)&&cfg$dapc$repetitions>=2,"Invalid iteration settings")
   cfg
 }
-stage_seed<-function(cfg,key){i<-match(key,cfg$seeds$analysis);assert(!is.na(i),paste("Missing seed",key));as.integer(cfg$seeds$seed[i])}
+stage_seed<-function(cfg,key,fallback=NULL){i<-match(key,cfg$seeds$analysis);if(is.na(i)&&!is.null(fallback))i<-match(fallback,cfg$seeds$analysis);assert(!is.na(i),paste("Missing seed",key));as.integer(cfg$seeds$seed[i])}
 stage_write <- function(cfg,id,result) {
   out<-file.path(cfg$out,"intermediate");dir.create(out,recursive=TRUE,showWarnings=FALSE)
   saveRDS(result,file.path(out,paste0(id,".rds")))

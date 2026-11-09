@@ -1,4 +1,16 @@
-# Release verification â€” version 1.1.0
+# Release verification — version 1.2.1
+
+Verified on Windows with R 4.6.1 on 9 November 2026. All 21 synthetic workflow stages completed and all 265 automated checks passed. All 102 R source files parsed. Installed dependency versions were checked against every package in renv.lock and agreed, using existing matching installations; a fresh network restore was not performed locally.
+
+New invented-data tests independently check grouped training splits, singleton training-only handling and random-number consumption, training-only PCA prediction, input-derived PC filtering, maximum-PC selection on an RMSE tie, and independent Mantel/correlogram seeds and iteration counts. Method-setting checks distinguish the short demonstration from the study template. No private genotype, observed sample-size target, selected-PC target or manuscript P-value was used.
+
+Separate AMOVA leave-one-division-out point estimates, filtered sensitivity GUI exports and pooling sensitivity helpers completed on invented data. The source checksum manifest passed. Scans for study identifier patterns, personal Windows paths and credential patterns found no matches. The stage log recorded no R warnings; the console contained single-observation geom_line messages and host-startup locale warnings.
+
+Primary AMOVA remains an external Arlequin GUI step. Neither this test run nor the source manifest certifies equality to private manuscript results, original predictor records or private laboratory evidence. Local verification did not include a private GUI run or every private sensitivity analysis. Hosted CI status should be checked for the particular commit on GitHub.
+
+## Earlier verification records
+
+### Release verification â€” version 1.1.0
 
 Verified locally on Windows using R 4.6.1 and installed dependencies. All 21 synthetic workflow stages completed and 235 automated checks passed. All R source files parsed successfully. Stage logs contained no analysis warnings; host startup emitted locale-setting warnings.
 

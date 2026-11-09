@@ -12,7 +12,7 @@ build_bar_panel <- function(mode = c("color", "grayscale")) {
         width = 0.72) + geom_text(aes(label = Label), hjust = -0.06, family = style$font, size = 2.55, colour = "black") + 
         scale_x_continuous(labels = function(x) {
             paste0(x, "%")
-        }, expand = expansion(mult = c(0, 0.23))) + scale_y_discrete(limits = rev(FINAL_HG_ORDER), drop = FALSE) + labs(x = "Final Haplogroup frequency (%)", 
+        }, expand = expansion(mult = c(0, 0.23))) + scale_y_discrete(limits = rev(FINAL_HG_ORDER), drop = FALSE) + labs(x = "Predicted haplogroup frequency (%)",
         y = NULL) + base_theme + theme(axis.line.y = element_blank(), axis.ticks.y = element_blank(), plot.margin = margin(t = 5, 
         r = 3, b = 4, l = 4, unit = "mm"))
 }

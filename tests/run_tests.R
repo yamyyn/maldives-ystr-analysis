@@ -17,7 +17,7 @@ rules<-method_env("inventory_rules")
 check(rules$check_format_rule(data.frame(Extension=c("pdf","png","tif")),"pdf|png|tiff","ALL"))
 check(!rules$check_format_rule(data.frame(Extension="pdf"),"pdf|png|tiff","ALL"))
 check(rules$check_format_rule(data.frame(Extension="csv"),"xlsx|csv","ANY"))
-source("tests/initial_qc_tests.R");source("tests/preparation_tests.R");source("tests/allele_size_eligibility_tests.R")
+source("tests/reproducibility_settings_tests.R");source("tests/initial_qc_tests.R");source("tests/preparation_tests.R");source("tests/allele_size_eligibility_tests.R")
 # Independent arithmetic with a deliberately repeated linked haplotype.
 h<-c("a","a","b","c");m<-hap_metrics(h)
 check(abs(m["HMP"]-.375)<1e-12);check(abs(m["HD"]-5/6)<1e-12);check(m["DC"]==.75)

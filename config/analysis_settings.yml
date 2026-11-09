@@ -1,11 +1,11 @@
 mode: synthetic
 input: data/example_synthetic/initial_qc_synthetic.csv
 qc_config: config/initial_qc.R
-run_id: synthetic_release_v1_2_0
+run_id: synthetic_release_v1_2_1
 results_root: results
 clean_root: data/clean
 panel_file: config/marker_panels.csv
-seed_file: config/random_seeds.csv
+seed_file: config/synthetic_random_seeds.csv
 prediction_leaves: data/example_synthetic/prediction_leaves.csv
 parent_mapping: data/example_synthetic/parent_mapping.csv
 reported_parents: data/example_synthetic/reported_parents.csv
@@ -24,9 +24,11 @@ iterations:
   accumulation: 39
   structure: 39
   mantel: 39
+  correlogram: 39
   rarefaction: 39
   bootstrap: 39
 dapc:
+  group_order: alphabetical
   training: 0.90
   repetitions: 3
   pc_grid: [1, 2, 3]

@@ -6,6 +6,9 @@ dispatch_stage <- function(id,s,cfg) {
   switch(id,
     `00_setup`={
       for(d in c("tables","figures","qc","logs","intermediate","captions"))dir.create(file.path(cfg$out,d),recursive=TRUE,showWarnings=FALSE)
+      yaml::write_yaml(cfg,file.path(cfg$out,"logs/effective_configuration.yml"))
+      write_csv(cfg$seeds,file.path(cfg$out,"logs/effective_random_seeds.csv"))
+      writeLines(paste(RNGkind(),collapse=" / "),file.path(cfg$out,"logs/RNGkind.txt"))
       writeLines(capture.output(sessionInfo()),file.path(cfg$out,"logs/sessionInfo.txt"))
       packages<-c("ggplot2","dplyr","tidyr","purrr","adegenet","ape","yaml","openxlsx","digest")
       list(environment=data.frame(Package=packages,Version=vapply(packages,function(p)as.character(packageVersion(p)),"")),mode=cfg$mode)
@@ -61,7 +64,7 @@ dispatch_stage <- function(id,s,cfg) {
       a<-panel_and_contribution(full,panels,markers);b<-panel_and_contribution(complete,panels,markers)
       list(panels=panels,definitions=p,full=a$performance,complete=b$performance,contribution=a$contribution,complete_contribution=b$contribution)
     },
-    `08_haplotype_accumulation`=accumulation_analysis(haplotype_keys(full,markers),cfg$iterations$accumulation,stage_seed(cfg,"accumulation"),seq(1,nrow(full),by=max(1,floor(nrow(full)/30)))),
+    `08_haplotype_accumulation`=accumulation_analysis(haplotype_keys(full,markers),cfg$iterations$accumulation,stage_seed(cfg,"accumulation"),sort(unique(c(1L,nrow(full),seq_len(nrow(full)%/%10L)*10L)))),
     `09a_prepare_structure`=prepare_structure(complete,study$single),
     `09b_export_arlequin`={
       out<-file.path("external/arlequin",cfg$run_id);assert(!dir.exists(out),"Arlequin export directory exists")
@@ -91,12 +94,14 @@ dispatch_stage <- function(id,s,cfg) {
       }
       result$ordination<-ordination_analysis(result$atoll$rst);result
     },
-    `10_spatial_statistics`=spatial_analysis(s$`09c_import_arlequin`$atoll$rst,s$`03_sampling_statistics`$metadata,cfg$iterations$mantel,stage_seed(cfg,"mantel")),
+    `10_spatial_statistics`=spatial_analysis(s$`09c_import_arlequin`$atoll$rst,s$`03_sampling_statistics`$metadata,cfg$iterations$mantel,stage_seed(cfg,"mantel"),cfg$iterations$correlogram,stage_seed(cfg,"correlogram","mantel")),
     `11_geographic_dapc`=geographic_dapc(s$`09a_prepare_structure`,cfg$dapc,stage_seed(cfg,"geographic_dapc")),
     `12_haplogroup_analysis`={
       settings<-cfg$haplogroup;settings$dapc<-cfg$dapc
       settings$dapc$pc_grid<-cfg$haplogroup$pc_grid
-      settings$dapc$october30_parent_grid<-TRUE
+      settings$dapc$group_order<-"frequency"
+      settings$dapc$rank_margin_candidate<-TRUE
+      settings$dapc$minimum_discriminant_pcs<-TRUE
       haplogroup_analysis(full,read_qc_csv(cfg$prediction_leaves),read_qc_csv(cfg$parent_mapping),settings,stage_seed(cfg,"haplogroup_dapc"),
         unlist(settings$unaffected_loci),read_qc_csv(cfg$reported_parents))
     },

@@ -9,39 +9,42 @@ encode_allele_states <- function(data) {
 }
 fit_dapc_scheme <- function(x,groups,ids,settings,seed,cv_minimum=2L) {
   assert(nrow(x)==length(groups)&&length(ids)==nrow(x)&&!anyDuplicated(ids),"Misaligned DAPC metadata")
-  group<-factor(groups,levels=names(sort(table(groups),decreasing=TRUE)))
+  order_mode<-if(is.null(settings$group_order))"alphabetical" else settings$group_order
+  assert(order_mode %in% c("alphabetical","frequency"),"Unknown DAPC group order")
+  counts<-table(groups);levels<-if(order_mode=="frequency")names(counts)[order(-as.integer(counts),names(counts))] else sort(unique(as.character(groups)))
+  group<-factor(groups,levels=levels)
   sizes<-table(group);eligible<-group %in% names(sizes[sizes>=cv_minimum])
   cv_group<-droplevels(group[eligible]);assert(nlevels(cv_group)>=2L,"Fewer than two CV-eligible groups")
-  rows <- split(which(eligible), group[eligible], drop = TRUE)
-  train_n <- pmax(1L, pmin(lengths(rows) - 1L, round(settings$training * lengths(rows))))
+  rows <- split(seq_len(nrow(x)), group, drop = TRUE)
+  train_n <- ifelse(lengths(rows)<cv_minimum,lengths(rows),pmax(1L,pmin(lengths(rows)-1L,round(settings$training*lengths(rows)))))
   set.seed(seed)
+  # Keep group-block order and sample singleton groups too, matching the study's RNG stream.
   training <- replicate(settings$repetitions,
-    sort(c(which(!eligible), unlist(Map(function(i, n) i[sample.int(length(i), n)], rows, train_n)))),
-    simplify = FALSE)
-  rank <- min(vapply(training, function(i) qr(scale(x[i,,drop=FALSE], TRUE, FALSE), tol=1e-10)$rank, integer(1)))
-  grid <- sort(unique(as.integer(unlist(settings$pc_grid))))
-  grid <- grid[grid >= 1L & grid <= rank]
-  if (isTRUE(settings$october30_parent_grid)) {
-    grid <- sort(unique(c(grid, rank)))
-    grid <- grid[grid >= nlevels(cv_group) - 1L]
-  }
-  assert(length(grid)>0L, "No feasible PC candidates for DAPC CV")
-  raw <- do.call(rbind, lapply(seq_along(training), function(rep) {
-    i <- training[[rep]]
-    j <- setdiff(seq_len(nrow(x)), i)
-    do.call(rbind, lapply(grid, function(pc) {
-      fit <- adegenet::dapc(x[i,,drop=FALSE], group[i], n.pca=pc,
-                            n.da=nlevels(group)-1L, center=TRUE, scale=FALSE, var.contrib=FALSE)
-      assigned <- stats::predict(fit, newdata=x[j,,drop=FALSE])$assign
-      success <- mean(tapply(as.character(assigned)==as.character(group[j]), droplevels(group[j]), mean))
-      data.frame(n.pca=pc, Replicate=rep, Group_Assignment_Success=success)
+    unlist(Map(function(i,n)i[sample.int(length(i),n)],rows,train_n),use.names=FALSE),simplify=FALSE)
+  full_rank <- qr(scale(x,TRUE,FALSE),tol=1e-10)$rank
+  requested_grid <- sort(unique(as.integer(unlist(settings$pc_grid))))
+  grid <- requested_grid[requested_grid>=1L & requested_grid<full_rank]
+  if(isTRUE(settings$rank_margin_candidate)||isTRUE(settings$october30_parent_grid))grid<-sort(unique(c(grid,full_rank-1L)))
+  if(isTRUE(settings$minimum_discriminant_pcs)||isTRUE(settings$october30_parent_grid))grid<-grid[grid>=nlevels(group)-1L]
+  assert(length(grid)>0L,"No feasible PC candidates for DAPC CV")
+  train_matrices <- lapply(training,function(i)as.data.frame(x[i,,drop=FALSE]))
+  pcas <- lapply(train_matrices,function(z)ade4::dudi.pca(z,center=TRUE,scale=FALSE,scannf=FALSE,nf=max(grid)))
+  grid <- grid[grid<=min(vapply(pcas,function(pca)ncol(pca$li),integer(1)))]
+  assert(length(grid)>0L,"No PC candidates supported by every training-subset PCA")
+  raw <- do.call(rbind,lapply(seq_along(training),function(rep){
+    i<-training[[rep]];j<-setdiff(seq_len(nrow(x)),i)
+    do.call(rbind,lapply(grid,function(pc){
+      fit<-adegenet::dapc(train_matrices[[rep]],group[i],n.pca=pc,n.da=nlevels(group)-1L,dudi=pcas[[rep]],var.contrib=FALSE)
+      assigned<-stats::predict(fit,newdata=as.data.frame(x[j,,drop=FALSE]))$assign
+      success<-mean(tapply(as.character(assigned)==as.character(group[j]),droplevels(group[j]),mean))
+      data.frame(n.pca=pc,Replicate=rep,Group_Assignment_Success=success)
     }))
   }))
   summary <- do.call(rbind, lapply(split(raw, raw$n.pca), function(z) data.frame(
     n.pca=z$n.pca[1L], Mean_Group_Assignment_Success=mean(z$Group_Assignment_Success),
     RMSE=sqrt(mean((1-z$Group_Assignment_Success)^2)))))
   summary$Mean_Group_Assignment_Percent <- 100 * summary$Mean_Group_Assignment_Success
-  best <- min(summary$n.pca[summary$RMSE == min(summary$RMSE)])
+  best <- max(summary$n.pca[summary$RMSE == min(summary$RMSE)])
   parsed <- list(Summary=summary, Raw=raw)
   cv <- list("Training Sample IDs"=lapply(training, function(i) ids[i]),
              "Cross-Validation Results"=raw)
@@ -54,7 +57,7 @@ fit_dapc_scheme <- function(x,groups,ids,settings,seed,cv_minimum=2L) {
   accuracy<-data.frame(Group=levels(group),N=as.integer(table(group)),Apparent_accuracy=vapply(levels(group),function(g)mean(pred[truth==g]==g),0.0))
   eig<-as.numeric(fit$eig);axis<-100*eig/sum(eig)
   list(fit=fit,cv=cv,cv_summary=parsed$Summary,cv_raw=parsed$Raw,scores=scores,axis_percent=c(axis,0)[1:2],
-    selected_pc=best,groups=data.frame(Group=names(sizes),N=as.integer(sizes)),cv_eligible=data.frame(sample_id=ids,Eligible=eligible),
+    selected_pc=best,requested_pc_grid=requested_grid,effective_pc_grid=grid,group_order=order_mode,seed=seed,groups=data.frame(Group=names(sizes),N=as.integer(sizes)),cv_eligible=data.frame(sample_id=ids,Eligible=eligible),
     metadata=data.frame(Full_n=nrow(x),Full_groups=nlevels(group),CV_n=sum(eligible),CV_groups=nlevels(cv_group),
       Requested_training=settings$training,Feasible_training=train,Repetitions=settings$repetitions,Selected_PC=best,
       CV_mean_success=parsed$Summary$Mean_Group_Assignment_Success[match(best,parsed$Summary$n.pca)],

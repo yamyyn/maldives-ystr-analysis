@@ -1,9 +1,10 @@
 analysis,seed
-sensitivity,20261004
-paired_bootstrap,20261005
+sensitivity,20261002
+paired_bootstrap,20261001
 accumulation,20261003
 structure,20261004
 mantel,20261005
+correlogram,20261006
 geographic_dapc,20261004
 haplogroup_dapc,20261007
 rarefaction,20261008

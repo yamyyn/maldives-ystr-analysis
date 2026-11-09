@@ -1,3 +1,14 @@
+# Version 1.2.1 — 9 November 2026
+
+- Separated synthetic demonstration seeds from the documented study configuration; corrected the study random-removal seed and Mantel permutation count.
+- Added a separately seeded correlogram, with its own iteration count and both progressive and simultaneous Holm outputs.
+- Aligned DAPC group ordering, singleton RNG consumption, grouped training order, training-only PCA reuse, rank-dependent candidate filtering and highest-PC RMSE tie handling with the study scripts.
+- Preserved the broad exploratory base grid. Effective grids and selected PCs remain input-derived rather than copied from manuscript results.
+- Matched accumulation evaluation sizes to the study's multiples-of-ten grid and retained separate rare-group sensitivity models.
+- Recorded effective configuration/seeds/RNG metadata with each run; added invented-data reproducibility regressions.
+- Updated the predicted-haplogroup frequency axis label and source recipe provenance.
+- Retained the external Arlequin GUI requirement and existing private-data exclusions. No private profiles or manuscript-result targets were added.
+
 # Version 1.2.0 — 8 November 2026
 
 - Replaced allele-size microvariant truncation with profile exclusion at included loci, assessed before DYS389II adjustment.

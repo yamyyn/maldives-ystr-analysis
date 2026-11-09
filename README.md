@@ -1,6 +1,6 @@
 # Maldives Y-STR analysis workflow
 
-Version 1.2.0. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
+Version 1.2.1. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
 
 Only explicitly invented demonstration data are included. Private genetic profiles, participant identifiers, predictor records, manuscript results and private verification targets are excluded. Results are calculated from the user's input; demonstration output does not reproduce the private study.
 
@@ -29,6 +29,10 @@ run_pipeline("config/private/settings.yml", from="09c_import_arlequin", resume=T
 ```
 
 Configure result paths before starting. The R workflow exports and imports Arlequin projects/results; it does not run the GUI or replace primary AMOVA with R estimates. The synthetic-only R branch and standalone point-estimate verification are explicitly separate. See [Arlequin instructions](docs/external_arlequin.md).
+
+## Study configuration versus demonstration
+
+The demonstration uses `config/analysis_settings.yml` and `config/synthetic_random_seeds.csv`. For study-scale methods, use `config/private_settings.template.yml` and `config/random_seeds.csv`, then supply authorized local input. Seeds, iterations, grouped split ordering, training-only PCA and data-derived candidate filtering are documented in [study settings](docs/study_configuration.md). No sample counts or selected PCs are fixed verification targets.
 
 ## Scientific conventions
 

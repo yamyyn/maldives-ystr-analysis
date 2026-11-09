@@ -9,8 +9,8 @@ authors:
     given-names: Ihthisham
   - family-names: Patel
     given-names: Bhargav C.
-version: "1.2.0"
+version: "1.2.1"
 license: GPL-3.0-only
-date-released: "2026-11-08"
+date-released: "2026-11-09"
 abstract: "Reproducible Y-STR analysis code with synthetic examples, quality control, and a separate Arlequin GUI handoff."
 repository-code: "https://github.com/yamyyn/maldives-ystr-analysis"

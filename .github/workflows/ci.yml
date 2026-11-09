@@ -9,6 +9,8 @@ jobs:
         with:
           r-version: '4.6.1'
       - uses: r-lib/actions/setup-renv@v2
+      - name: Verify source manifest
+        run: Rscript tools/check_source_integrity.R
       - name: Run all synthetic stages
         run: Rscript run_pipeline.R --config config/analysis_settings.yml
       - name: Check invariants and failure gates
