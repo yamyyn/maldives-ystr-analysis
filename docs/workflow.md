@@ -21,7 +21,7 @@ Individual stage scripts invoke the same runner. A stage requires preceding chec
 1. Copy `config/private_settings.template.yml` to ignored `config/private/settings.yml` and the QC template to `config/private/initial_qc.R`.
 2. Configure private CSV input, assay slots, independent population mapping, exact confirmed no-call patterns, and their evidence. Add `classification=confirmed_deletion` only where independently established. Never source synthetic confirmation records for private data.
 3. Supply the leaf posterior, leaf-to-parent mapping and independently reported parent labels described in `data_dictionary.md`. Modeled classes include zeros. The reported parent is preserved; it is not silently replaced by a new argmax call.
-4. Choose and document iteration counts, PC grid and random seeds. The private template contains methodological starting values, not proof that they reproduce every historical setting; compare them to the selected original/revised analyses before inference.
+4. Use the study iteration counts, base PC grids and random seeds documented in [study configuration](study_configuration.md), or document deliberate changes. The private template records these methodological settings; private numerical reproduction still requires the matching authorized inputs, row order, dependency versions and original external results.
 5. Configure the three future external result paths before the run. These files may be absent until the Arlequin checkpoint.
 
 ```text
