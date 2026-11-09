@@ -1,60 +1,133 @@
 # Maldives Y-STR analysis workflow
 
-Version 1.2.1. Reusable R analysis scripts for Y-STR diversity, forensic parameters, marker panels, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. This is an RStudio/command-line workflow repository, not an installable R library package.
+Version 1.2.1
 
-Only explicitly invented demonstration data are included. Private genetic profiles, participant identifiers, predictor records, manuscript results and private verification targets are excluded. Results are calculated from the user's input; demonstration output does not reproduce the private study.
+R scripts for Y-STR diversity, forensic parameters, marker-panel comparisons, sensitivity analyses, population structure, spatial analyses, and exploratory haplogroup reporting. The repository is an RStudio and command-line workflow, rather than an installable R package.
 
-## Quick start
+The repository contains analysis code and synthetic example data. Individual-level study data are not included. The synthetic examples demonstrate the workflow and do not reproduce the study’s numerical results.
 
-Open `maldives-ystr-analysis.Rproj`. Install `renv` explicitly if needed, then run `renv::restore()` to restore the recorded dependency versions. No analysis script installs or updates packages automatically.
+## Getting started
 
-From the repository root:
+Open `maldives-ystr-analysis.Rproj` in RStudio. Install `renv` if needed, then restore the recorded dependencies:
+
+```r
+renv::restore()
+```
+
+Run the synthetic example from the repository root:
 
 ```r
 source("R/pipeline.R")
 run_pipeline("config/analysis_settings.yml")
 ```
 
-Or use `Rscript run_pipeline.R --config config/analysis_settings.yml`. After the synthetic pipeline completes, run `Rscript tests/run_tests.R`. The demonstration uses reduced iteration counts and raster resolution for speed. Its publication gate intentionally remains withheld. Run in a fresh extracted copy; repeated runs require a new run ID or a valid resume checkpoint.
+Alternatively, use the command line:
 
-## Own-data analysis and Arlequin GUI
+```sh
+Rscript run_pipeline.R --config config/analysis_settings.yml
+```
 
-Follow [the data dictionary](docs/data_dictionary.md) and [private configuration template](config/private_settings.template.yml). Supply authorized input and predictor outputs locally in ignored folders. No haplogroup predictor service is called by this repository.
+After the workflow completes, run the automated checks:
+
+```sh
+Rscript tests/run_tests.R
+```
+
+The example uses reduced iteration counts and image resolution to shorten execution time. Publication assembly is intentionally disabled for synthetic runs. To repeat an analysis, use a new run ID or resume a valid checkpoint.
+
+## Using your own data
+
+Follow the [data dictionary](docs/data_dictionary.md) and copy the [configuration template](config/private_settings.template.yml) to `config/private/settings.yml`. Supply your authorized input data, quality-control evidence, geographic metadata, and predictor outputs in the designated local folders.
+
+The template records the study’s methodological settings. The synthetic example uses a separate configuration and seed table. See [study configuration](docs/study_configuration.md) for iteration counts, random seeds, DAPC settings, and input-dependent PC selection.
+
+Files placed in the designated private-input folders are excluded from version control by the supplied ignore rules. Review the files staged for commit before sharing a modified repository.
+
+Haplogroup predictor outputs must be supplied separately; the workflow does not submit profiles to an external prediction service.
+
+## Arlequin analyses
+
+Primary AMOVA and pairwise RST analyses are performed separately in the Arlequin GUI. The R workflow prepares input projects and imports the resulting output files.
+
+Configure the expected result paths before starting, then run through the export stage:
 
 ```r
 source("R/pipeline.R")
-run_pipeline("config/private/settings.yml", until="09b_export_arlequin")
-# Run the exported projects separately in the Arlequin GUI.
-run_pipeline("config/private/settings.yml", from="09c_import_arlequin", resume=TRUE)
+run_pipeline(
+  "config/private/settings.yml",
+  until = "09b_export_arlequin"
+)
 ```
 
-Configure result paths before starting. The R workflow exports and imports Arlequin projects/results; it does not run the GUI or replace primary AMOVA with R estimates. The synthetic-only R branch and standalone point-estimate verification are explicitly separate. See [Arlequin instructions](docs/external_arlequin.md).
+Run the exported projects in Arlequin and save the original output files at the configured locations. Resume the workflow with:
 
-## Study configuration versus demonstration
+```r
+run_pipeline(
+  "config/private/settings.yml",
+  from = "09c_import_arlequin",
+  resume = TRUE
+)
+```
 
-The demonstration uses `config/analysis_settings.yml` and `config/synthetic_random_seeds.csv`. For study-scale methods, use `config/private_settings.template.yml` and `config/random_seeds.csv`, then supply authorized local input. Seeds, iterations, grouped split ordering, training-only PCA and data-derived candidate filtering are documented in [study settings](docs/study_configuration.md). No sample counts or selected PCs are fixed verification targets.
+The synthetic example uses separately labeled R calculations to test downstream processing. These do not replace the primary Arlequin analyses. See the [Arlequin instructions](docs/external_arlequin.md).
 
-## Scientific conventions
+## Analytical conventions
 
-- Single observed multicopy allele states are not duplicated or interpreted as molecular copy-number evidence. Raw calls are preserved; unordered analytical patterns are used consistently.
-- Forensic haplotypes retain typed DYS389II. Structure analysis uses DYS389II minus DYS389I, with separate audited integer coding for Arlequin and categorical microvariants for DAPC.
-- Primary random removal samples complete profiles only, without replacement, matching the excluded-profile division counts; the incomplete profiles remain in each simulated dataset.
-- DAPC fits preprocessing on training profiles only. Haplogroup cross-validation includes categories with at least two profiles; singleton categories remain in training. The separate rare-group analysis requires at least five profiles per category. These thresholds are configurable.
-- No sample size, observed result, model-selected PC count or manuscript P-value is used as a fixed verification target.
-- PDF and SVG are vector exports; PNG and TIFF use configured resolution. The private template specifies 600 dpi. Existing figure exports are separate assets and are not bundled here.
+- Single observed alleles at multicopy systems are retained as single analytical states. Missing copies are not inferred or duplicated; observed multicopy patterns are treated as unordered.
+- Forensic haplotypes retain DYS389II as typed. Population-structure analyses use DYS389II minus DYS389I.
+- Allele-size-based analyses exclude profiles containing microvariants at included single-copy loci before the DYS389II adjustment. Alleles are not truncated or rounded. Eligibility is reassessed separately for each marker panel.
+- Categorical DAPC retains microvariants as distinct allele states in the complete-profile dataset.
+- The primary random-removal analysis removes complete profiles without replacement, matching the administrative-division distribution of the excluded incomplete profiles. Incomplete profiles remain in each simulated dataset.
+- DAPC preprocessing is fitted to training profiles only. Exploratory predicted-haplogroup validation includes categories represented by at least two profiles; singleton categories remain in training only. A separate sensitivity analysis uses categories represented by at least five profiles.
+- Haplogroup predictions are exploratory and do not constitute diagnostic Y-SNP confirmation.
+- Sample sizes, effective PC grids, selected PCs, and analysis results are calculated from the supplied inputs.
 
-## Repository layout
+## Outputs and reproducibility
 
-`scripts/` contains ordered entry points; `R/` contains reusable methods and source-derived recipes; `config/` defines marker panels and methodological settings; `data/example_synthetic/` contains invented input. `verification/` contains separate sensitivity checks. Generated results, private inputs, external results and installed libraries are ignored and omitted from the release archive.
+The workflow records the effective configuration, random seeds, random-number generator settings, package versions, and stage logs. Input and source fingerprints protect against resuming analyses after their inputs or code have changed.
 
-See [methods](docs/methods.md), [execution guide](docs/workflow.md), [release notes](CHANGELOG.md), [test report](docs/TEST_REPORT.md), and [environment](docs/environment.md). Historical source/output mappings document provenance; they do not certify private numerical equality or exact publication artwork. Sampling-map assets remain external author-supplied inputs.
+Figures are exported as PDF, SVG, PNG, and TIFF in color and grayscale. PDF and SVG provide vector output; raster resolution is configurable. The study configuration specifies 600 dpi.
 
-## Licence and citation
+Generated outputs, local data, external Arlequin results, and installed libraries are excluded from the source archive. Sampling-map assets must be supplied separately.
 
-Code is distributed under GPL-3.0-only, selected by the study author. See `LICENSE`, `NOTICE.md` and `CITATION.cff`. The source repository is [https://github.com/yamyyn/maldives-ystr-analysis](https://github.com/yamyyn/maldives-ystr-analysis). No software DOI has been assigned.
+Before modifying an extracted release, check its source integrity:
 
-Before making local source edits, verify the extracted release with Rscript tools/check_source_integrity.R. The manifest covers source integrity, not private-data equivalence. Test fixtures contain independent toy arithmetic expectations, never fixed manuscript results.
+```sh
+Rscript tools/check_source_integrity.R
+```
 
-## Allele-size versus categorical cohorts
+The automated tests use synthetic data and independently specified test examples. Passing these tests verifies workflow behavior; reproducing the study’s numerical results additionally requires the corresponding study inputs, external results, and documented analysis environment.
 
-AMOVA/RST excludes profiles carrying microvariants at the included single-copy loci; no integer truncation is used. Categorical DAPC retains distinct microvariant states and its complete-profile cohort. Cohort sizes and exclusion reasons are derived from input data. Reduced marker panels must reassess eligibility separately. Primary AMOVA remains an external Arlequin GUI analysis. See [method details](docs/external_arlequin.md).
+## Repository structure
+
+| Folder | Contents |
+|---|---|
+| `R/` | Analysis functions and figure/table routines |
+| `scripts/` | Ordered workflow entry points |
+| `config/` | Marker panels, settings, and seed tables |
+| `data/example_synthetic/` | Synthetic example inputs |
+| `verification/` | Additional verification and sensitivity scripts |
+| `docs/` | Methods, data requirements, execution instructions, and testing information |
+
+## Documentation
+
+- [Data dictionary](docs/data_dictionary.md)
+- [Execution guide](docs/workflow.md)
+- [Methods](docs/methods.md)
+- [Study configuration](docs/study_configuration.md)
+- [Arlequin instructions](docs/external_arlequin.md)
+- [Software environment](docs/environment.md)
+- [Test report](docs/TEST_REPORT.md)
+- [Change history](CHANGELOG.md)
+
+## License and citation
+
+The code is distributed under the GNU General Public License v3.0 only (`GPL-3.0-only`). See `LICENSE` and `NOTICE.md`.
+
+Citation metadata are provided in `CITATION.cff`. Please cite the workflow version used and the associated study when applicable.
+
+Repository: https://github.com/yamyyn/maldives-ystr-analysis
+
+Versioned source: https://github.com/yamyyn/maldives-ystr-analysis/tree/v1.2.1
+
+No software DOI has been assigned.
